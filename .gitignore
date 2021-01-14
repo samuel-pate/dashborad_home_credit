@@ -1,5 +1,5 @@
 # répertoires et fichiers à ignorer par git
 
-data/
+datas/
 img/
 tests/
