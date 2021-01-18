@@ -8,7 +8,7 @@ L'exploration et le traitement des données sont inspirés des notebooks Kaggle 
 
 
 Le modèle est un classifieur LightGBM dont les paramètres sont optimisés par optimisation bayésienne.   
-Il est disponilbe sous forme d'API à l'adresse https://home-credit-app-sp.herokuapp.com/.
+Il est disponible sous forme d'API à l'adresse https://home-credit-app-sp.herokuapp.com/.
 
 
 Le modèle est rendu interprétable via le dashboard dont une version en ligne est accessible à l'adresse https://home-credit-dashboard-sp.herokuapp.com/
