@@ -10,7 +10,8 @@ import numpy as np
 
 
 # récupération des données, des informations et du modèle
-data = pd.read_csv("../data/app_data.csv", index_col="SK_ID_CURR")
+data = pd.read_csv("../data/test_df.csv", index_col="SK_ID_CURR")
+data.drop(columns=["index", "TARGET"], inplace=True)
 
 model = pickle.load(open("../data/pickle_lgbm_classifier.pkl", "rb"))
 cat_features = pickle.load(open("../data/pickle_cat_features.pkl", "rb"))
@@ -150,7 +151,7 @@ tab_1 = html.Div(children=[
             dcc.RadioItems(id="importance_choice",
                 options=[
                     {"label": "Importances dans les décisions du modèle", "value": "lgbm"},
-                    {'label': 'Importances dans les différences à la moyenne', 'value': "shap"}
+                    {'label': 'Importances dans les différences à une valeur de référence', 'value': "shap"}
                 ],
                 value="lgbm"
         ),
@@ -202,7 +203,7 @@ def display_importance(value):
     else:
         fig = fig_shap_importance
         opt = [{"label":y_shap[i], "value":i} for i in range(len(y_shap))]
-        title = "Attributs expliquant le plus les écarts au score moyen"
+        title = "Attributs expliquant le plus les écarts à une valeur de référence"
     return fig, opt, title
 
 # affichage de l'histogramme en fonction de la feature choisie
@@ -450,7 +451,7 @@ def display_score(id_customer, df_intermediate):
     y_shap.append(df_shap.iloc[5:,0].sum())
     y_shap.append(0)
     y_shap.insert(0, 0)
-    x_shap= [""]
+    x_shap= [" "]
     for i in range(5):
         feat = df_shap.iloc[i,1]
         if feat in cat_features:
@@ -466,7 +467,7 @@ def display_score(id_customer, df_intermediate):
         x=x_shap,
         y=y_shap,
         measure=["relative"]*7 + ["total"],
-        text=["Risque moyen", "", "", "", "", "", "", f"Risque du client {id_customer}"],
+        text=["Risque de référence", " ", " ", " ", " ", " ", " ", f"Risque du client {id_customer}"],
         textposition="outside",
         decreasing = {"marker":{"color":"Green"}},
         increasing = {"marker":{"color":"Red"}}
@@ -477,7 +478,7 @@ def display_score(id_customer, df_intermediate):
     ))
     fig_waterfall.add_trace(go.Scatter(
         name="Limite d'accord",
-        x=["", "Écart total"],
+        x=[" ", "Écart total"],
         y=[1.44, 1.44]
     ))
 
@@ -502,6 +503,8 @@ def display_score(id_customer, df_intermediate):
 def display_value_importance(id_cust, feat, df_intermediate):
     df_shap = pd.read_json(df_intermediate, orient="split")
     val = data.loc[id_cust, feat]
+    if feat in cat_features:
+        val = categorical_names[feat][val]
     imp = df_shap.loc[df_shap["feature"]==feat, "shap_value"].values[0]
     return (
         f"Pour le client {id_cust}, l'attribut",
