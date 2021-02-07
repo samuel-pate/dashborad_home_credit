@@ -21,7 +21,7 @@ shap_values = pickle.load(open("../data/pickle_shap_values.pkl", 'rb'))
 
 # prédictions du modèle
 prob = model.predict_proba(data, num_iteration=model.best_iteration_)[:,1]
-pred = [0 if i<=0.18 else 1 for i in prob]
+pred = [0 if i<=0.19 else 1 for i in prob]
 
 # graphiques
 # camembert des prédictions
@@ -118,7 +118,7 @@ tab_1 = html.Div(children=[
         html.H2(
             children="Pour chaque client un score est calculé.\
                 Celui-ci correspond au risque de défaut de paiement. \
-                Si ce score est supérieur à 18, le prêt est refusé",
+                Si ce score est supérieur à 19, le prêt est refusé",
             className="four columns"
         ),
         html.Div(children=[
@@ -439,7 +439,7 @@ def calculate_shap(id_customer):
 def display_score(id_customer, df_intermediate):
     proba = model.predict_proba(np.array(data.loc[id_customer]).reshape(1, -1), num_iteration=model.best_iteration_)
     score = round(proba[0][1]*100,1)
-    if score < 18 :
+    if score < 19 :
         agrement = "Prêt accepté"
         style = {"color":"green"}
     else :
@@ -479,7 +479,7 @@ def display_score(id_customer, df_intermediate):
     fig_waterfall.add_trace(go.Scatter(
         name="Limite d'accord",
         x=[" ", "Écart total"],
-        y=[-3.53, -3.53]
+        y=[-3.46, -3.46]
     ))
 
     opt = [{"label": i, "value": i} for i in df_shap["feature"]]
