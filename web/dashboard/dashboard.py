@@ -391,7 +391,7 @@ def change_feature_3(feat):
             marks[round(i,2)] = str(round(i,2))
     return extreams[0], extreams[1], marks, list(extreams)
 
-# valeurs du qutrième filtre (hormis accord de prêt)
+# valeurs du quatrième filtre (hormis accord de prêt)
 @app.callback(
     Output("values_filter_4", "min"),
     Output("values_filter_4", "max"),
@@ -439,7 +439,7 @@ def calculate_shap(id_customer):
 def display_score(id_customer, df_intermediate):
     proba = model.predict_proba(np.array(data.loc[id_customer]).reshape(1, -1), num_iteration=model.best_iteration_)
     score = round(proba[0][1]*100,1)
-    if score < 15 :
+    if score < 18 :
         agrement = "Prêt accepté"
         style = {"color":"green"}
     else :
@@ -455,7 +455,7 @@ def display_score(id_customer, df_intermediate):
     for i in range(5):
         feat = df_shap.iloc[i,1]
         if feat in cat_features:
-            val = categorical_names[feat][data.loc[id_customer,feat]]
+            val = categorical_names[feat][int(data.loc[id_customer,feat])]
         else :
             val = round(data.loc[id_customer, feat],3)
         x_shap.append(f"{feat} : {val}")
@@ -479,7 +479,7 @@ def display_score(id_customer, df_intermediate):
     fig_waterfall.add_trace(go.Scatter(
         name="Limite d'accord",
         x=[" ", "Écart total"],
-        y=[1.44, 1.44]
+        y=[-3.53, -3.53]
     ))
 
     opt = [{"label": i, "value": i} for i in df_shap["feature"]]
@@ -504,7 +504,7 @@ def display_value_importance(id_cust, feat, df_intermediate):
     df_shap = pd.read_json(df_intermediate, orient="split")
     val = data.loc[id_cust, feat]
     if feat in cat_features:
-        val = categorical_names[feat][val]
+        val = categorical_names[feat][int(val)]
     imp = df_shap.loc[df_shap["feature"]==feat, "shap_value"].values[0]
     return (
         f"Pour le client {id_cust}, l'attribut",
@@ -583,4 +583,4 @@ app.layout = html.Div(children=[
 
 # lancement de l'application
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
