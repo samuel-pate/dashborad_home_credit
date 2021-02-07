@@ -12,6 +12,7 @@ import numpy as np
 # récupération des données, des informations et du modèle
 data = pd.read_csv("../data/test_df.csv", index_col="SK_ID_CURR")
 data.drop(columns=["index", "TARGET"], inplace=True)
+data = data.replace(to_replace=np.nan, value=0)
 
 model = pickle.load(open("../data/pickle_lgbm_classifier.pkl", "rb"))
 cat_features = pickle.load(open("../data/pickle_cat_features.pkl", "rb"))
